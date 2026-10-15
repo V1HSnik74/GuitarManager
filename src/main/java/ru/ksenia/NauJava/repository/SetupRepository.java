@@ -3,6 +3,7 @@ package ru.ksenia.NauJava.repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import ru.ksenia.NauJava.entity.Setup;
 import ru.ksenia.NauJava.enums.PedalTypes;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public interface SetupRepository extends CrudRepository<Setup, Long> {
     List<Setup> findAllByUserId(Long userId);
 
-    @Query("SELECT DISTINCT s FROM Setup s JOIN s.pedalSlots slot WHERE slot.pedal.pedalType = :pedalType" )
+    @Query("SELECT DISTINCT s FROM Setup s JOIN s.pedalboard slot WHERE slot.pedal.pedalType = :pedalType" )
     List<Setup> findAllContainingPedalType(@Param("pedalType")PedalTypes pedalType);
 
     boolean existsByUserIdAndName(Long userId, String name);

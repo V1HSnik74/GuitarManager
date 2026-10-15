@@ -2,14 +2,14 @@ package ru.ksenia.NauJava.console;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.ksenia.NauJava.bussinessLogic.GuitarService;
+import ru.ksenia.NauJava.service.GuitarService;
 import ru.ksenia.NauJava.entity.Guitar;
 
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-@Component
+/*@Component
 public class GuitarConsole {
     private final GuitarService guitarService;
 
@@ -174,3 +174,4 @@ public class GuitarConsole {
         }
     }
 }
+ */

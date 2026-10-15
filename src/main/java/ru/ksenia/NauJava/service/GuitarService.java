@@ -1,4 +1,4 @@
-package ru.ksenia.NauJava.bussinessLogic;
+package ru.ksenia.NauJava.service;
 
 import ru.ksenia.NauJava.entity.Guitar;
 

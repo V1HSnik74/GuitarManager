@@ -1,9 +1,9 @@
-package ru.ksenia.NauJava.repository;
+package ru.ksenia.NauJava.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.ksenia.NauJava.dao.SetupRepositoryCustom;
+import org.springframework.stereotype.Repository;
 import ru.ksenia.NauJava.entity.Pedal;
 import ru.ksenia.NauJava.entity.PedalSlot;
 import ru.ksenia.NauJava.entity.Setup;
@@ -11,6 +11,7 @@ import ru.ksenia.NauJava.enums.PedalTypes;
 
 import java.util.List;
 
+@Repository
 public class SetupRepositoryCustomImpl implements SetupRepositoryCustom {
     private final EntityManager entityManager;
 
@@ -24,7 +25,7 @@ public class SetupRepositoryCustomImpl implements SetupRepositoryCustom {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Setup> criteriaQuery = criteriaBuilder.createQuery(Setup.class);
         Root<Setup> setupRoot = criteriaQuery.from(Setup.class);
-        Join<Setup, PedalSlot> slotJoin = setupRoot.join("pedalSlots");
+        Join<Setup, PedalSlot> slotJoin = setupRoot.join("pedalboard");
         Join<PedalSlot, Pedal> pedalJoin = slotJoin.join("pedal");
         Predicate pedalTypePredicate = criteriaBuilder.equal(pedalJoin.get("pedalType"), pedalType);
         criteriaQuery.select(setupRoot).distinct(true).where(pedalTypePredicate);

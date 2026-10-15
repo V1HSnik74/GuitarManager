@@ -24,7 +24,7 @@ public class PedalSlot {
     @JoinColumn(name = "pedal_id", nullable = false)
     private Pedal pedal;
 
-    @Column(nullable = false, name="order_index", unique = true)
+    @Column(nullable = false, name="order_index")
     private int orderIndex;
 
     @Enumerated(EnumType.STRING)

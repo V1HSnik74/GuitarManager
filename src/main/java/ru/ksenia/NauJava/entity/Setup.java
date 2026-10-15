@@ -29,11 +29,11 @@ public class Setup {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "guitar_id", nullable = false)
+    @JoinColumn(name = "guitar_id")
     private Guitar guitar;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "amp_id", nullable = false)
+    @JoinColumn(name = "amp_id")
     private Amp amp;
 
     @Column(columnDefinition = "TEXT", name = "amp_config")

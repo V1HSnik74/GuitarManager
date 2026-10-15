@@ -1,7 +1,5 @@
-package ru.ksenia.NauJava.repository;
+package ru.ksenia.NauJava.dao;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import ru.ksenia.NauJava.entity.Setup;
 import ru.ksenia.NauJava.enums.PedalTypes;
 
