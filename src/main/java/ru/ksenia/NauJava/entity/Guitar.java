@@ -1,58 +1,55 @@
 package ru.ksenia.NauJava.entity;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity
+@Table(name = "guitars")
 public class Guitar {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String brand;
+
+    @Column(nullable = false)
     private String model;
-    private int stringsCount;
+
+    @Column(nullable = false, name = "strings_count", columnDefinition = "INT DEFAULT 6")
+    private int stringsCount = 6;
+
+    @Column(nullable = false, name = "pickup_type")
     private String pickupType;
+
+    @Column(nullable = false, name="guitar_type")
+    private String guitarType;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    public Long getId() {
-        return id;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @OneToMany(mappedBy = "guitar")
+    private List<Setup> setups = new ArrayList<>();
 
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
+    public Guitar(String brand, String model, int stringsCount, String pickupType, String guitarType, String description, User user) {
         this.brand = brand;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
         this.model = model;
-    }
-
-    public int getStringsCount() {
-        return stringsCount;
-    }
-
-    public void setStringsCount(int stringsCount) {
         this.stringsCount = stringsCount;
-    }
-
-    public String getPickupType() {
-        return pickupType;
-    }
-
-    public void setPickupType(String pickupType) {
         this.pickupType = pickupType;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
+        this.guitarType = guitarType;
         this.description = description;
+        this.user = user;
     }
 }

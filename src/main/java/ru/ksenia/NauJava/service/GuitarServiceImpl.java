@@ -1,4 +1,4 @@
-package ru.ksenia.NauJava.bussinessLogic;
+package ru.ksenia.NauJava.service;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
