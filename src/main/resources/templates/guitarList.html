@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Guitar list</title>
+</head>
+<body>
+<h1>Guitar list</h1>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>Pickups</th>
+        <th>Guitar type</th>
+    </tr>
+    <tr th:each="guitar : ${guitars}">
+        <td th:text="${guitar.id}"></td>
+        <td th:text="${guitar.brand}"></td>
+        <td th:text="${guitar.model}"></td>
+        <td th:text="${guitar.pickupType}"></td>
+        <td th:text="${guitar.guitarType}"></td>
+    </tr>
+</table>
+</body>
+</html>
