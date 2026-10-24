@@ -3,12 +3,14 @@ package ru.ksenia.NauJava.repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 import ru.ksenia.NauJava.entity.Setup;
 import ru.ksenia.NauJava.enums.PedalTypes;
 
 import java.util.List;
 
+@RepositoryRestResource(path = "setups")
 public interface SetupRepository extends CrudRepository<Setup, Long> {
     List<Setup> findAllByUserId(Long userId);
 
