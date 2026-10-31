@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.ksenia.NauJava.enums.Role;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +28,15 @@ public class User {
     @Column(nullable = false, unique = true)
     private String login;
 
-    public User(String login, String password, String username) {
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    public User(String login, String password, String username, Role role) {
         this.login = login;
         this.password = password;
         this.username = username;
+        this.role = role;
     }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
