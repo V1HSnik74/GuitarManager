@@ -3,7 +3,7 @@ package ru.ksenia.NauJava.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.ksenia.NauJava.service.ReportService;
+import ru.ksenia.NauJava.service.interfaces.ReportService;
 
 import java.io.IOException;
 

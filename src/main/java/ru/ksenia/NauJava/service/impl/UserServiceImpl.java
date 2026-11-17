@@ -1,4 +1,4 @@
-package ru.ksenia.NauJava.service;
+package ru.ksenia.NauJava.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.enums.Role;
 import ru.ksenia.NauJava.repository.UserRepository;
+import ru.ksenia.NauJava.service.interfaces.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {

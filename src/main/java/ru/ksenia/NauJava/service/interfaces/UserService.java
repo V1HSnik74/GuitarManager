@@ -1,4 +1,4 @@
-package ru.ksenia.NauJava.service;
+package ru.ksenia.NauJava.service.interfaces;
 
 import ru.ksenia.NauJava.entity.User;
 

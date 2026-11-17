@@ -1,4 +1,4 @@
-package ru.ksenia.NauJava.service;
+package ru.ksenia.NauJava.service.impl;
 
 import jakarta.persistence.NoResultException;
 import org.springframework.stereotype.Service;
@@ -8,6 +8,7 @@ import ru.ksenia.NauJava.enums.ReportStatus;
 import ru.ksenia.NauJava.repository.GuitarRepository;
 import ru.ksenia.NauJava.repository.ReportRepository;
 import ru.ksenia.NauJava.repository.UserRepository;
+import ru.ksenia.NauJava.service.interfaces.ReportService;
 
 
 import java.util.concurrent.CompletableFuture;

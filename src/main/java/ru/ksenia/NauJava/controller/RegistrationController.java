@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.ksenia.NauJava.entity.User;
-import ru.ksenia.NauJava.service.UserService;
+import ru.ksenia.NauJava.service.interfaces.UserService;
 
 @Controller
 public class RegistrationController {

@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.enums.Role;
 import ru.ksenia.NauJava.repository.UserRepository;
-import ru.ksenia.NauJava.service.UserServiceImpl;
+import ru.ksenia.NauJava.service.impl.UserServiceImpl;
 
 
 import java.util.Optional;

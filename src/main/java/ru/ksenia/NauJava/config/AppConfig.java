@@ -1,8 +1,10 @@
 package ru.ksenia.NauJava.config;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+@Getter
 @Configuration
 public class AppConfig {
     @Value("${app.name}")
@@ -11,11 +13,4 @@ public class AppConfig {
     @Value("${app.version}")
     private String appVersion;
 
-    public String getAppName() {
-        return appName;
-    }
-
-    public String getAppVersion() {
-        return appVersion;
-    }
 }

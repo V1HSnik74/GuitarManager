@@ -1,4 +1,4 @@
-package ru.ksenia.NauJava.service;
+package ru.ksenia.NauJava.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.ksenia.NauJava.entity.User;
-import ru.ksenia.NauJava.repository.UserRepository;
+import ru.ksenia.NauJava.service.interfaces.UserService;
 
 @Component
 public class UserDetailServiceImpl implements UserDetailsService {

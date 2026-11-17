@@ -1,4 +1,4 @@
-package ru.ksenia.NauJava.service;
+package ru.ksenia.NauJava.service.interfaces;
 
 public interface ReportService {
     String getReportContent(Long id);
