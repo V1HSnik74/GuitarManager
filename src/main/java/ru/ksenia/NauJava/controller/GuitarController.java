@@ -1,0 +1,54 @@
+package ru.ksenia.NauJava.controller;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import ru.ksenia.NauJava.entity.Guitar;
+import ru.ksenia.NauJava.security.CustomUserDetails;
+import ru.ksenia.NauJava.service.interfaces.GuitarService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/guitars")
+public class GuitarController {
+    private final GuitarService guitarService;
+
+    public GuitarController(GuitarService guitarService) {
+        this.guitarService = guitarService;
+    }
+
+    @PostMapping
+    public Guitar addGuitar(@RequestBody Guitar guitar, @AuthenticationPrincipal CustomUserDetails currUser) {
+        return guitarService.addGuitar(guitar, currUser.getId());
+    }
+
+    @PutMapping("/{id}")
+    public Guitar updateGuitar(@PathVariable Long id, @RequestBody Guitar newData, @AuthenticationPrincipal CustomUserDetails currUser) {
+        return guitarService.updateGuitar(newData, id, currUser.getId());
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteGuitar(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
+        guitarService.deleteGuitar(id, currUser.getId());
+    }
+
+    @GetMapping("/{id}")
+    public Guitar getGuitarById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
+        return guitarService.getGuitarById(id, currUser.getId());
+    }
+
+    @GetMapping
+    public List<Guitar> getAllGuitarByUser(@AuthenticationPrincipal CustomUserDetails currUser) {
+        return guitarService.getAllGuitarsByUserId(currUser.getId());
+    }
+
+    @GetMapping("/admin")
+    public List<Guitar> getAllGuitarAdmin() {
+        return guitarService.getAllGuitarsAdmin();
+    }
+
+    @DeleteMapping("/admin/{id}")
+    public void deleteGuitarAdmin(@PathVariable Long id) {
+        guitarService.deleteGuitarAdmin(id);
+    }
+}

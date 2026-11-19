@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-hateoas")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
 	testImplementation("org.mockito:mockito-core:5.3.1")
 	testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
 	testImplementation("io.rest-assured:rest-assured:5.5.1")
@@ -37,6 +38,8 @@ dependencies {
 	testImplementation("io.github.bonigarcia:webdrivermanager:5.5.3")
 	runtimeOnly("org.postgresql:postgresql")
 	compileOnly("org.projectlombok:lombok")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 	annotationProcessor("org.projectlombok:lombok")
 }
 

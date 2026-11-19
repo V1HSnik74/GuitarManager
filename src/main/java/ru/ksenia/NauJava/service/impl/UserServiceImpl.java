@@ -22,17 +22,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addNewUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (user.getRole() == null) {
-            user.setRole(Role.USER);
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("Пользователь с такой почтой уже существует");
         }
-        user.setLogin(user.getUsername());
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Это имя пользователя уже занято");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
+        user.setEmail(user.getUsername() + "@example.com");
         userRepository.save(user);
     }
 
     @Override
-    public User getUserByName(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+    public User getUserByUsernameOrEmail(String username, String email) {
+        return userRepository.findByEmailOrUsername(email, username).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
     }
+
+
 }
