@@ -1,15 +1,16 @@
 package ru.ksenia.NauJava.service.interfaces;
 
-import ru.ksenia.NauJava.entity.Pedal;
+import ru.ksenia.NauJava.dto.PedalRequest;
+import ru.ksenia.NauJava.dto.PedalResponse;
 
 import java.util.List;
 
 public interface PedalService {
-    Pedal addPedal(Pedal pedal, Long userId);
-    Pedal updatePedal(Pedal newData, Long id, Long userId);
+    PedalResponse addPedal(PedalRequest request, Long userId);
+    PedalResponse updatePedal(PedalRequest newData, Long id, Long userId);
     void deletePedal(Long id, Long userId);
-    Pedal getPedalById(Long id, Long userId);
-    List<Pedal> getPedalsByUserId(Long userId);
-    List<Pedal> getAllPedalsAdmin();
+    PedalResponse getPedalById(Long id, Long userId);
+    List<PedalResponse> getPedalsByUserId(Long userId);
+    List<PedalResponse> getAllPedalsAdmin();
     void deletePedalAdmin(Long id);
 }

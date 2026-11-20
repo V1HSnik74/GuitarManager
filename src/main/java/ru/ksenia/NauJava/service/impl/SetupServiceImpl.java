@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ksenia.NauJava.dto.PedalSlotRequest;
+import ru.ksenia.NauJava.dto.SetupRequest;
+import ru.ksenia.NauJava.dto.SetupResponse;
 import ru.ksenia.NauJava.entity.Pedal;
 import ru.ksenia.NauJava.entity.PedalSlot;
 import ru.ksenia.NauJava.entity.Setup;
 import ru.ksenia.NauJava.entity.User;
-import ru.ksenia.NauJava.repository.PedalRepository;
-import ru.ksenia.NauJava.repository.SetupRepository;
-import ru.ksenia.NauJava.repository.UserRepository;
-import ru.ksenia.NauJava.service.interfaces.PedalService;
+import ru.ksenia.NauJava.repository.*;
 import ru.ksenia.NauJava.service.interfaces.SetupService;
 
 import java.util.ArrayList;
@@ -22,27 +22,35 @@ public class SetupServiceImpl implements SetupService {
     private final SetupRepository setupRepository;
     private final UserRepository userRepository;
     private final PedalRepository pedalRepository;
+    private final GuitarRepository guitarRepository;
+    private final AmpRepository ampRepository;
+    private final CabRepository cabRepository;
 
     @Autowired
-    public SetupServiceImpl(SetupRepository setupRepository, UserRepository userRepository, PedalRepository pedalRepository) {
+    public SetupServiceImpl(SetupRepository setupRepository, UserRepository userRepository, PedalRepository pedalRepository, GuitarRepository guitarRepository, AmpRepository ampRepository, CabRepository cabRepository) {
         this.setupRepository = setupRepository;
         this.userRepository = userRepository;
         this.pedalRepository = pedalRepository;
+        this.guitarRepository = guitarRepository;
+        this.ampRepository = ampRepository;
+        this.cabRepository = cabRepository;
     }
 
     @Override
-    public List<Setup> getAllSetups(Long userId) {
-        return setupRepository.findAllByUserId(userId);
+    @Transactional(readOnly = true)
+    public List<SetupResponse> getAllSetups(Long userId) {
+        return setupRepository.findAllByUserId(userId).stream()
+                .map(SetupResponse::fromEntity).toList();
     }
 
     @Override
     @Transactional
-    public Setup addSetup(Setup setup, Long userId) {
+    public SetupResponse addSetup(SetupRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+        Setup setup = new Setup();
         setup.setUser(user);
-        List<PedalSlot> newData = setup.getPedalboard() == null ? List.of() : new ArrayList<>(setup.getPedalboard());
-        applyPedalboard(setup, userId, newData);
-        return setupRepository.save(setup);
+        applyFields(setup, request, userId);
+        return SetupResponse.fromEntity(setupRepository.save(setup));
     }
 
     @Override
@@ -54,27 +62,23 @@ public class SetupServiceImpl implements SetupService {
 
     @Override
     @Transactional
-    public Setup updateSetup(Setup newSetup, Long setupId, Long userId) {
+    public SetupResponse updateSetup(SetupRequest newSetup, Long setupId, Long userId) {
         Setup setup = getSetup(setupId, userId);
-        setup.setName(newSetup.getName());
-        setup.setAmp(newSetup.getAmp());
-        setup.setAmpConfig(newSetup.getAmpConfig());
-        setup.setCab(newSetup.getCab());
-        setup.setDescription(newSetup.getDescription());
-        List<PedalSlot> newData = setup.getPedalboard() == null ? List.of() : new ArrayList<>(setup.getPedalboard());
-        applyPedalboard(setup, userId, newData);
-        setup.setGuitar(newSetup.getGuitar());
-        return setupRepository.save(setup);
+        applyFields(setup, newSetup, userId);
+        return SetupResponse.fromEntity(setupRepository.save(setup));
     }
 
     @Override
-    public Setup getSetupById(Long setupId, Long userId) {
-        return getSetup(setupId, userId);
+    @Transactional(readOnly = true)
+    public SetupResponse getSetupById(Long setupId, Long userId) {
+        return SetupResponse.fromEntity(getSetup(setupId, userId));
     }
 
     @Override
-    public List<Setup> getAllSetupsAdmin() {
-        return setupRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<SetupResponse> getAllSetupsAdmin() {
+        return setupRepository.findAll().stream()
+                .map(SetupResponse::fromEntity).toList();
     }
 
     @Override
@@ -83,7 +87,7 @@ public class SetupServiceImpl implements SetupService {
         setupRepository.deleteById(setupId);
     }
 
-    private void applyPedalboard(Setup setup, Long userId, List<PedalSlot> newData) {
+    private void applyPedalboard(Setup setup, Long userId, List<PedalSlotRequest> newData) {
         if (setup.getPedalboard() == null) {
             setup.setPedalboard(new ArrayList<>());
         }
@@ -92,10 +96,10 @@ public class SetupServiceImpl implements SetupService {
             return;
         }
         for (int i = 0; i < newData.size(); i++) {
-            PedalSlot newSlot = newData.get(i);
-            Pedal pedal = pedalRepository.findByIdAndUser(newSlot.getPedal().getId(), userId).orElseThrow(() -> new ResourceNotFoundException("Педаль не найдена"));
+            PedalSlotRequest newSlot = newData.get(i);
+            Pedal pedal = pedalRepository.findByIdAndUser(newSlot.pedalId(), userId).orElseThrow(() -> new ResourceNotFoundException("Педаль не найдена"));
             PedalSlot slot = new PedalSlot(
-                    setup, pedal, i, pedal.getPedalType().getChainZone(), newSlot.getConfig()
+                    setup, pedal, i, pedal.getPedalType().getChainZone(), newSlot.config()
             );
             setup.getPedalboard().add(slot);
         }
@@ -103,6 +107,25 @@ public class SetupServiceImpl implements SetupService {
 
     private Setup getSetup(Long id, Long userId) {
         return setupRepository.findByIdAndUser(id, userId).orElseThrow(() -> new ResourceNotFoundException("Пресет не найден"));
+    }
+
+    private void applyFields(Setup setup, SetupRequest data, Long userId) {
+        setup.setName(data.name());
+        setup.setDescription(data.description());
+        setup.setAmpConfig(data.ampConfig());
+        setup.setGuitar(data.guitarId() == null ? null
+                : guitarRepository.findByIdAndUser(data.guitarId(), userId).orElseThrow(
+                () -> new ResourceNotFoundException("Гитара не найдена")
+        ));
+        setup.setAmp(data.ampId() == null ? null
+                : ampRepository.findByIdAndUser(data.ampId(), userId).orElseThrow(
+                () -> new ResourceNotFoundException("Усилитель не найден")
+        ));
+        setup.setCab(data.cabId() == null ? null
+                : cabRepository.findByIdAndUser(data.cabId(), userId).orElseThrow(
+                () -> new ResourceNotFoundException("Кабинет не найден")
+        ));
+        applyPedalboard(setup, userId, data.pedalboard());
     }
 
 }

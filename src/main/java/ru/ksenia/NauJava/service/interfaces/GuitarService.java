@@ -1,15 +1,16 @@
 package ru.ksenia.NauJava.service.interfaces;
 
-import ru.ksenia.NauJava.entity.Guitar;
+import ru.ksenia.NauJava.dto.GuitarRequest;
+import ru.ksenia.NauJava.dto.GuitarResponse;
 
 import java.util.List;
 
 public interface GuitarService {
-    Guitar addGuitar(Guitar guitar, Long userId);
-    Guitar updateGuitar(Guitar newData, Long guitarId, Long userId);
+    GuitarResponse addGuitar(GuitarRequest request, Long userId);
+    GuitarResponse updateGuitar(GuitarRequest newData, Long guitarId, Long userId);
     void deleteGuitar(Long id, Long userId);
-    Guitar getGuitarById(Long id, Long userId);
-    List<Guitar> getAllGuitarsByUserId(Long userId);
-    List<Guitar> getAllGuitarsAdmin();
+    GuitarResponse getGuitarById(Long id, Long userId);
+    List<GuitarResponse> getAllGuitarsByUserId(Long userId);
+    List<GuitarResponse> getAllGuitarsAdmin();
     void deleteGuitarAdmin(Long guitarId);
 }

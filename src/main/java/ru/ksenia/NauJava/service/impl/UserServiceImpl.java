@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.ksenia.NauJava.dto.RegisterRequest;
 import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.enums.Role;
 import ru.ksenia.NauJava.repository.UserRepository;
@@ -21,16 +22,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addNewUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
+    public void addNewUser(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("Пользователь с такой почтой уже существует");
         }
-        if (userRepository.existsByUsername(user.getUsername())) {
+        if (userRepository.existsByUsername(request.username())) {
             throw new IllegalArgumentException("Это имя пользователя уже занято");
         }
+        User user = new User();
+        user.setUsername(request.username());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
-        user.setEmail(user.getUsername() + "@example.com");
+        user.setEmail(user.getEmail());
         userRepository.save(user);
     }
 

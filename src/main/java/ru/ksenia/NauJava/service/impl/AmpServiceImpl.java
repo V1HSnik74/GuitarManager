@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ksenia.NauJava.dto.AmpRequest;
+import ru.ksenia.NauJava.dto.AmpResponse;
 import ru.ksenia.NauJava.entity.Amp;
 import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.repository.AmpRepository;
@@ -28,44 +30,47 @@ public class AmpServiceImpl implements AmpService {
 
     @Override
     @Transactional
-    public Amp addAmp(Amp amp, Long userId) {
+    public AmpResponse addAmp(AmpRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+        Amp amp = new Amp();
         amp.setUser(user);
-        return ampRepository.save(amp);
+        applyFields(amp, request);
+        return AmpResponse.fromEntity(ampRepository.save(amp));
     }
 
     @Override
     @Transactional
-    public Amp updateAmp(Amp newData, Long id, Long userId) {
+    public AmpResponse updateAmp(AmpRequest newData, Long id, Long userId) {
         Amp amp = getAmp(id, userId);
-        amp.setAmpType(newData.getAmpType());
-        amp.setBrand(newData.getBrand());
-        amp.setDescription(newData.getDescription());
-        amp.setModel(newData.getModel());
-        return ampRepository.save(amp);
+        applyFields(amp, newData);
+        return AmpResponse.fromEntity(ampRepository.save(amp));
     }
 
     @Override
     @Transactional
     public void deleteAmp(Long id, Long userId) {
-        Amp amp = getAmpById(id, userId);
+        Amp amp = getAmp(id, userId);
         throwIfExists(id);
         ampRepository.delete(amp);
     }
 
     @Override
-    public Amp getAmpById(Long id, Long userId) {
-        return getAmp(id, userId);
+    public AmpResponse getAmpById(Long id, Long userId) {
+        return AmpResponse.fromEntity(getAmp(id, userId));
     }
 
     @Override
-    public List<Amp> getAmpsByUserId(Long userId) {
-        return ampRepository.findAllByUserId(userId);
+    public List<AmpResponse> getAmpsByUserId(Long userId) {
+        return ampRepository.findAllByUserId(userId).stream()
+                .map(AmpResponse::fromEntity)
+                .toList();
     }
 
     @Override
-    public List<Amp> getAllAmpsAdmin() {
-        return ampRepository.findAll();
+    public List<AmpResponse> getAllAmpsAdmin() {
+        return ampRepository.findAll().stream()
+                .map(AmpResponse::fromEntity)
+                .toList();
     }
 
     @Override
@@ -83,5 +88,12 @@ public class AmpServiceImpl implements AmpService {
         if (setupRepository.existsByAmpId(id)) {
             throw new IllegalStateException("Нельзя удалить усилитель, так как он используется в пресетах");
         }
+    }
+
+    private void applyFields(Amp amp, AmpRequest data) {
+        amp.setModel(data.model());
+        amp.setBrand(data.brand());
+        amp.setAmpType(data.ampType());
+        amp.setDescription(data.description());
     }
 }

@@ -2,7 +2,8 @@ package ru.ksenia.NauJava.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.ksenia.NauJava.entity.Amp;
+import ru.ksenia.NauJava.dto.AmpRequest;
+import ru.ksenia.NauJava.dto.AmpResponse;
 import ru.ksenia.NauJava.security.CustomUserDetails;
 import ru.ksenia.NauJava.service.interfaces.AmpService;
 
@@ -18,12 +19,12 @@ public class AmpController {
     }
 
     @PostMapping
-    public Amp addAmp(@RequestBody Amp amp, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public AmpResponse addAmp(@RequestBody AmpRequest amp, @AuthenticationPrincipal CustomUserDetails currUser) {
         return ampService.addAmp(amp, currUser.getId());
     }
 
     @PutMapping("/{id}")
-    public Amp updateAmp(@RequestBody Amp newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public AmpResponse updateAmp(@RequestBody AmpRequest newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
         return ampService.updateAmp(newData, id, currUser.getId());
     }
 
@@ -33,17 +34,17 @@ public class AmpController {
     }
 
     @GetMapping("/{id}")
-    public Amp getAmpById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public AmpResponse getAmpById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
         return ampService.getAmpById(id, currUser.getId());
     }
 
     @GetMapping
-    public List<Amp> getAllAmpsUserId(@AuthenticationPrincipal CustomUserDetails currUser) {
+    public List<AmpResponse> getAllAmpsUserId(@AuthenticationPrincipal CustomUserDetails currUser) {
         return ampService.getAmpsByUserId(currUser.getId());
     }
 
     @GetMapping("/admin")
-    public List<Amp> getAllAmpsAdmin() {
+    public List<AmpResponse> getAllAmpsAdmin() {
         return ampService.getAllAmpsAdmin();
     }
 

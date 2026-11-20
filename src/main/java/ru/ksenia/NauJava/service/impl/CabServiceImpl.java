@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ksenia.NauJava.dto.CabRequest;
+import ru.ksenia.NauJava.dto.CabResponse;
 import ru.ksenia.NauJava.entity.Cab;
 import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.repository.CabRepository;
@@ -28,21 +30,20 @@ public class CabServiceImpl implements CabService {
 
     @Override
     @Transactional
-    public Cab addCab(Cab cab, Long userId) {
+    public CabResponse addCab(CabRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+        Cab cab = new Cab();
         cab.setUser(user);
-        return cabRepository.save(cab);
+        applyFields(cab, request);
+        return CabResponse.fromEntity(cabRepository.save(cab));
     }
 
     @Override
     @Transactional
-    public Cab updateCab(Cab newData, Long id, Long userId) {
+    public CabResponse updateCab(CabRequest newData, Long id, Long userId) {
         Cab cab = getCab(id, userId);
-        cab.setBrand(newData.getBrand());
-        cab.setDescription(newData.getDescription());
-        cab.setModel(newData.getModel());
-        cab.setSpeakers(newData.getSpeakers());
-        return cabRepository.save(cab);
+        applyFields(cab, newData);
+        return CabResponse.fromEntity(cabRepository.save(cab));
     }
 
     @Override
@@ -54,18 +55,22 @@ public class CabServiceImpl implements CabService {
     }
 
     @Override
-    public Cab getCabById(Long id, Long userId) {
-        return getCab(id, userId);
+    public CabResponse getCabById(Long id, Long userId) {
+        return CabResponse.fromEntity(getCab(id, userId));
     }
 
     @Override
-    public List<Cab> getAllCabsByUser(Long userId) {
-        return cabRepository.findAllByUserId(userId);
+    public List<CabResponse> getAllCabsByUser(Long userId) {
+        return cabRepository.findAllByUserId(userId).stream()
+                .map(CabResponse::fromEntity)
+                .toList();
     }
 
     @Override
-    public List<Cab> getAllCabsAdmin() {
-        return cabRepository.findAll();
+    public List<CabResponse> getAllCabsAdmin() {
+        return cabRepository.findAll().stream()
+                .map(CabResponse::fromEntity)
+                .toList();
     }
 
     @Override
@@ -83,5 +88,12 @@ public class CabServiceImpl implements CabService {
         if (setupRepository.existsByCabId(id)) {
             throw new IllegalStateException("Нельзя удалить кабинет, так как он привязан к пресетам");
         }
+    }
+
+    private void applyFields(Cab cab, CabRequest data) {
+        cab.setBrand(data.brand());
+        cab.setModel(data.model());
+        cab.setSpeakers(data.speakers());
+        cab.setDescription(data.description());
     }
 }

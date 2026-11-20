@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.ksenia.NauJava.entity.User;
+import ru.ksenia.NauJava.dto.AuthResponse;
+import ru.ksenia.NauJava.dto.LoginRequest;
+import ru.ksenia.NauJava.dto.RegisterRequest;
 import ru.ksenia.NauJava.security.CustomUserDetails;
 import ru.ksenia.NauJava.security.JwtService;
 import ru.ksenia.NauJava.service.interfaces.UserService;
@@ -29,22 +29,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public Map<String, String> register(@RequestBody User user) {
-        userService.addNewUser(user);
-        String token = jwtService.generateToken(user.getEmail());
-        return Map.of("token", token);
+    public AuthResponse register(@RequestBody RegisterRequest request) {
+        userService.addNewUser(request);
+        String token = jwtService.generateToken(request.email());
+        return new AuthResponse(token);
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> request) {
-        String loginInput = request.get("login");
-        String password = request.get("password");
+    public AuthResponse login(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginInput, password)
+                new UsernamePasswordAuthenticationToken(request.login(), request.password())
         );
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         String token = jwtService.generateToken(userDetails.getUsername());
-        return Map.of("token", token);
+        return new AuthResponse(token);
     }
 
 }

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ksenia.NauJava.dto.GuitarRequest;
+import ru.ksenia.NauJava.dto.GuitarResponse;
 import ru.ksenia.NauJava.entity.Guitar;
 import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.repository.GuitarRepository;
@@ -28,23 +30,20 @@ public class GuitarServiceImpl implements GuitarService {
 
     @Override
     @Transactional
-    public Guitar addGuitar(Guitar guitar, Long userId) {
+    public GuitarResponse addGuitar(GuitarRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Пользователя не существует"));
+        Guitar guitar = new Guitar();
         guitar.setUser(user);
-        return guitarRepository.save(guitar);
+        applyFields(guitar, request);
+        return GuitarResponse.fromEntity(guitarRepository.save(guitar));
     }
 
     @Override
     @Transactional
-    public Guitar updateGuitar(Guitar newData, Long guitarId, Long userId) {
+    public GuitarResponse updateGuitar(GuitarRequest newData, Long guitarId, Long userId) {
         Guitar guitar = getGuitar(guitarId, userId);
-        guitar.setGuitarType(newData.getGuitarType());
-        guitar.setPickupType(newData.getPickupType());
-        guitar.setBrand(newData.getBrand());
-        guitar.setModel(newData.getModel());
-        guitar.setDescription(newData.getDescription());
-        guitar.setStringsCount(newData.getStringsCount());
-        return guitarRepository.save(guitar);
+        applyFields(guitar, newData);
+        return GuitarResponse.fromEntity(guitarRepository.save(guitar));
     }
 
     @Override
@@ -56,18 +55,22 @@ public class GuitarServiceImpl implements GuitarService {
     }
 
     @Override
-    public Guitar getGuitarById(Long id, Long userId) {
-        return getGuitar(id, userId);
+    public GuitarResponse getGuitarById(Long id, Long userId) {
+        return GuitarResponse.fromEntity(getGuitar(id, userId));
     }
 
     @Override
-    public List<Guitar> getAllGuitarsByUserId(Long userId) {
-        return guitarRepository.findAllByUserId(userId);
+    public List<GuitarResponse> getAllGuitarsByUserId(Long userId) {
+        return guitarRepository.findAllByUserId(userId).stream()
+                .map(GuitarResponse::fromEntity)
+                .toList();
     }
 
     @Override
-    public List<Guitar> getAllGuitarsAdmin() {
-        return guitarRepository.findAll();
+    public List<GuitarResponse> getAllGuitarsAdmin() {
+        return guitarRepository.findAll().stream()
+                .map(GuitarResponse::fromEntity)
+                .toList();
     }
 
     @Override
@@ -85,5 +88,14 @@ public class GuitarServiceImpl implements GuitarService {
         if (setupRepository.existsByGuitarId(guitarId)) {
             throw new IllegalStateException("Нельзя удалить гитару, так как она используется в пресетах");
         }
+    }
+
+    private void applyFields(Guitar guitar, GuitarRequest data) {
+        guitar.setBrand(data.brand());
+        guitar.setModel(data.model());
+        guitar.setStringsCount(data.stringsCount() == 0 ? 6 : data.stringsCount());
+        guitar.setPickupType(data.pickupType());
+        guitar.setGuitarType(data.guitarType());
+        guitar.setDescription(data.description());
     }
 }

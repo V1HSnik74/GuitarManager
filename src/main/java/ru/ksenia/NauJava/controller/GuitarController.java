@@ -2,7 +2,8 @@ package ru.ksenia.NauJava.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.ksenia.NauJava.entity.Guitar;
+import ru.ksenia.NauJava.dto.GuitarRequest;
+import ru.ksenia.NauJava.dto.GuitarResponse;
 import ru.ksenia.NauJava.security.CustomUserDetails;
 import ru.ksenia.NauJava.service.interfaces.GuitarService;
 
@@ -18,12 +19,12 @@ public class GuitarController {
     }
 
     @PostMapping
-    public Guitar addGuitar(@RequestBody Guitar guitar, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public GuitarResponse addGuitar(@RequestBody GuitarRequest guitar, @AuthenticationPrincipal CustomUserDetails currUser) {
         return guitarService.addGuitar(guitar, currUser.getId());
     }
 
     @PutMapping("/{id}")
-    public Guitar updateGuitar(@PathVariable Long id, @RequestBody Guitar newData, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public GuitarResponse updateGuitar(@PathVariable Long id, @RequestBody GuitarRequest newData, @AuthenticationPrincipal CustomUserDetails currUser) {
         return guitarService.updateGuitar(newData, id, currUser.getId());
     }
 
@@ -33,17 +34,17 @@ public class GuitarController {
     }
 
     @GetMapping("/{id}")
-    public Guitar getGuitarById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public GuitarResponse getGuitarById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
         return guitarService.getGuitarById(id, currUser.getId());
     }
 
     @GetMapping
-    public List<Guitar> getAllGuitarByUser(@AuthenticationPrincipal CustomUserDetails currUser) {
+    public List<GuitarResponse> getAllGuitarByUser(@AuthenticationPrincipal CustomUserDetails currUser) {
         return guitarService.getAllGuitarsByUserId(currUser.getId());
     }
 
     @GetMapping("/admin")
-    public List<Guitar> getAllGuitarAdmin() {
+    public List<GuitarResponse> getAllGuitarAdmin() {
         return guitarService.getAllGuitarsAdmin();
     }
 

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ksenia.NauJava.dto.PedalRequest;
+import ru.ksenia.NauJava.dto.PedalResponse;
 import ru.ksenia.NauJava.entity.Pedal;
 import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.repository.PedalRepository;
@@ -28,21 +30,20 @@ public class PedalServiceImpl implements PedalService {
 
     @Override
     @Transactional
-    public Pedal addPedal(Pedal pedal, Long userId) {
+    public PedalResponse addPedal(PedalRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
+        Pedal pedal = new Pedal();
         pedal.setUser(user);
-        return pedalRepository.save(pedal);
+        applyFields(pedal, request);
+        return PedalResponse.fromEntity(pedalRepository.save(pedal));
     }
 
     @Override
     @Transactional
-    public Pedal updatePedal(Pedal newData, Long id, Long userId) {
+    public PedalResponse updatePedal(PedalRequest newData, Long id, Long userId) {
         Pedal pedal = getPedal(id, userId);
-        pedal.setPedalType(newData.getPedalType());
-        pedal.setModel(newData.getModel());
-        pedal.setBrand(newData.getBrand());
-        pedal.setDescription(newData.getDescription());
-        return pedalRepository.save(pedal);
+        applyFields(pedal, newData);
+        return PedalResponse.fromEntity(pedalRepository.save(pedal));
     }
 
     @Override
@@ -54,18 +55,22 @@ public class PedalServiceImpl implements PedalService {
     }
 
     @Override
-    public Pedal getPedalById(Long id, Long userId) {
-        return getPedal(id, userId);
+    public PedalResponse getPedalById(Long id, Long userId) {
+        return PedalResponse.fromEntity(getPedal(id, userId));
     }
 
     @Override
-    public List<Pedal> getPedalsByUserId(Long userId) {
-        return pedalRepository.findAllByUserId(userId);
+    public List<PedalResponse> getPedalsByUserId(Long userId) {
+        return pedalRepository.findAllByUserId(userId).stream()
+                .map(PedalResponse::fromEntity)
+                .toList();
     }
 
     @Override
-    public List<Pedal> getAllPedalsAdmin() {
-        return pedalRepository.findAll();
+    public List<PedalResponse> getAllPedalsAdmin() {
+        return pedalRepository.findAll().stream()
+                .map(PedalResponse::fromEntity)
+                .toList();
     }
 
     @Override
@@ -83,5 +88,12 @@ public class PedalServiceImpl implements PedalService {
         if (pedalSlotRepository.existsByPedalId(id)) {
             throw new IllegalStateException("Нельзя удалить педаль, так как она используется в пресетах");
         }
+    }
+
+    private void applyFields(Pedal pedal, PedalRequest data) {
+        pedal.setBrand(data.brand());
+        pedal.setModel(data.model());
+        pedal.setPedalType(data.pedalType());
+        pedal.setDescription(data.description());
     }
 }
