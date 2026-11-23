@@ -39,6 +39,9 @@ public class Setup {
     @Column(columnDefinition = "TEXT", name = "amp_config")
     private String ampConfig;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cab_id")
     private Cab cab;

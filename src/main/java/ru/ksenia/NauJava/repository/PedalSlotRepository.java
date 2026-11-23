@@ -6,6 +6,6 @@ import ru.ksenia.NauJava.entity.PedalSlot;
 import java.util.List;
 
 public interface PedalSlotRepository extends JpaRepository<PedalSlot, Long> {
-    List<PedalSlot> findAllBySetupIdOrderByOrderIndexAsc(Long setupId, Long userId);
+    List<PedalSlot> findAllBySetupIdAndSetupUserIdOrderByOrderIndexAsc(Long setupId, Long userId);
     boolean existsByPedalId(Long pedalId);
 }

@@ -97,7 +97,7 @@ public class SetupServiceImpl implements SetupService {
         }
         for (int i = 0; i < newData.size(); i++) {
             PedalSlotRequest newSlot = newData.get(i);
-            Pedal pedal = pedalRepository.findByIdAndUser(newSlot.pedalId(), userId).orElseThrow(() -> new ResourceNotFoundException("Педаль не найдена"));
+            Pedal pedal = pedalRepository.findByIdAndUserId(newSlot.pedalId(), userId).orElseThrow(() -> new ResourceNotFoundException("Педаль не найдена"));
             PedalSlot slot = new PedalSlot(
                     setup, pedal, i, pedal.getPedalType().getChainZone(), newSlot.config()
             );
@@ -106,7 +106,7 @@ public class SetupServiceImpl implements SetupService {
     }
 
     private Setup getSetup(Long id, Long userId) {
-        return setupRepository.findByIdAndUser(id, userId).orElseThrow(() -> new ResourceNotFoundException("Пресет не найден"));
+        return setupRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new ResourceNotFoundException("Пресет не найден"));
     }
 
     private void applyFields(Setup setup, SetupRequest data, Long userId) {
@@ -114,18 +114,19 @@ public class SetupServiceImpl implements SetupService {
         setup.setDescription(data.description());
         setup.setAmpConfig(data.ampConfig());
         setup.setGuitar(data.guitarId() == null ? null
-                : guitarRepository.findByIdAndUser(data.guitarId(), userId).orElseThrow(
+                : guitarRepository.findByIdAndUserId(data.guitarId(), userId).orElseThrow(
                 () -> new ResourceNotFoundException("Гитара не найдена")
         ));
         setup.setAmp(data.ampId() == null ? null
-                : ampRepository.findByIdAndUser(data.ampId(), userId).orElseThrow(
+                : ampRepository.findByIdAndUserId(data.ampId(), userId).orElseThrow(
                 () -> new ResourceNotFoundException("Усилитель не найден")
         ));
         setup.setCab(data.cabId() == null ? null
-                : cabRepository.findByIdAndUser(data.cabId(), userId).orElseThrow(
+                : cabRepository.findByIdAndUserId(data.cabId(), userId).orElseThrow(
                 () -> new ResourceNotFoundException("Кабинет не найден")
         ));
         applyPedalboard(setup, userId, data.pedalboard());
+        setup.setImageUrl(data.imageUrl());
     }
 
 }

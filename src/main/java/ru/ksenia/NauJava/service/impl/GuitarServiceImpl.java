@@ -81,7 +81,7 @@ public class GuitarServiceImpl implements GuitarService {
     }
 
     private Guitar getGuitar(Long id, Long userId) {
-        return guitarRepository.findByIdAndUser(id, userId).orElseThrow(() -> new ResourceNotFoundException("Гитара не найдена"));
+        return guitarRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new ResourceNotFoundException("Гитара не найдена"));
     }
 
     private void throwIfUsed(Long guitarId) {
@@ -97,5 +97,6 @@ public class GuitarServiceImpl implements GuitarService {
         guitar.setPickupType(data.pickupType());
         guitar.setGuitarType(data.guitarType());
         guitar.setDescription(data.description());
+        guitar.setImageUrl(data.imageUrl());
     }
 }

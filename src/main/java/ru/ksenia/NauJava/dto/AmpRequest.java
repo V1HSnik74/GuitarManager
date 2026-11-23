@@ -6,6 +6,7 @@ public record AmpRequest(
         String brand,
         String model,
         AmpTypes ampType,
-        String description
+        String description,
+        String imageUrl
 ) {
 }

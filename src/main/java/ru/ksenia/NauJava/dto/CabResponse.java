@@ -7,7 +7,8 @@ public record CabResponse(
         String brand,
         String model,
         String speakers,
-        String description
+        String description,
+        String imageUrl
 ) {
     public static CabResponse fromEntity(Cab cab) {
         return new CabResponse(
@@ -15,7 +16,8 @@ public record CabResponse(
                 cab.getBrand(),
                 cab.getModel(),
                 cab.getSpeakers(),
-                cab.getDescription()
+                cab.getDescription(),
+                cab.getImageUrl()
         );
     }
 }

@@ -6,5 +6,6 @@ public record GuitarRequest(
         int stringsCount,
         String pickupType,
         String guitarType,
-        String description
+        String description,
+        String imageUrl
 ) {}

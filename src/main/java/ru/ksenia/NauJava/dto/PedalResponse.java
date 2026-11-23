@@ -8,7 +8,8 @@ public record PedalResponse(
         String brand,
         String model,
         PedalTypes pedalType,
-        String description
+        String description,
+        String imageUrl
 ) {
     public static PedalResponse fromEntity(Pedal pedal) {
         return new PedalResponse(
@@ -16,7 +17,8 @@ public record PedalResponse(
                 pedal.getBrand(),
                 pedal.getModel(),
                 pedal.getPedalType(),
-                pedal.getDescription()
+                pedal.getDescription(),
+                pedal.getImageUrl()
         );
     }
 }

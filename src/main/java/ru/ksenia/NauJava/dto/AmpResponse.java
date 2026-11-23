@@ -8,7 +8,8 @@ public record AmpResponse(
         String brand,
         String model,
         AmpTypes ampType,
-        String description
+        String description,
+        String imageUrl
 ) {
     public static AmpResponse fromEntity(Amp amp) {
         return new AmpResponse(
@@ -16,7 +17,8 @@ public record AmpResponse(
                 amp.getBrand(),
                 amp.getModel(),
                 amp.getAmpType(),
-                amp.getDescription()
+                amp.getDescription(),
+                amp.getImageUrl()
         );
     }
 }

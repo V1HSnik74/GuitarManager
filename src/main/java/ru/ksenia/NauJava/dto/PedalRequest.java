@@ -6,6 +6,7 @@ public record PedalRequest(
         String brand,
         String model,
         PedalTypes pedalType,
-        String description
+        String description,
+        String imageUrl
 ) {
 }

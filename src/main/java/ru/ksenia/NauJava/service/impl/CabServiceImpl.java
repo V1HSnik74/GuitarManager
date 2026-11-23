@@ -81,7 +81,7 @@ public class CabServiceImpl implements CabService {
     }
 
     private Cab getCab(Long id, Long userId) {
-        return cabRepository.findByIdAndUser(id, userId).orElseThrow(() -> new ResourceNotFoundException("Кабинет не найден"));
+        return cabRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new ResourceNotFoundException("Кабинет не найден"));
     }
 
     private void throwIfUsed(Long id) {
@@ -95,5 +95,6 @@ public class CabServiceImpl implements CabService {
         cab.setModel(data.model());
         cab.setSpeakers(data.speakers());
         cab.setDescription(data.description());
+        cab.setImageUrl(data.imageUrl());
     }
 }

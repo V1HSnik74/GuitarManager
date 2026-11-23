@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface AmpRepository extends JpaRepository<Amp, Long> {
     List<Amp> findAllByUserId(Long userId);
-    Optional<Amp> findByIdAndUser(Long id, Long userId);
+    Optional<Amp> findByIdAndUserId(Long id, Long userId);
 }

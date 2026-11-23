@@ -12,19 +12,5 @@ import java.util.List;
 
 @Configuration
 public class GuitarsInitializer {
-    @Bean
-    public CommandLineRunner initGuitars(GuitarRepository guitarRepository, UserRepository userRepository) {
-        return args -> {
-            if (guitarRepository.count() == 0) {
-                User user = userRepository.findById(1L).orElseThrow();
-                List<Guitar> testGuitars = List.of(
-                        new Guitar("Ibanez", "Roadstar", 6,
-                                "HSS", "Superstrat", null, user),
-                        new Guitar("Gibson", "SG", 6, "HH", "SG", null, user),
-                        new Guitar("PRS", "Custom 24", 6, "HH", "Doublecut", null, user)
-                );
-                guitarRepository.saveAll(testGuitars);
-            }
-        };
-    }
+
 }

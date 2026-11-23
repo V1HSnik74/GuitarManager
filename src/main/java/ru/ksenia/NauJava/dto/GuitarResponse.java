@@ -9,7 +9,8 @@ public record GuitarResponse (
     int stringsCount,
     String pickupType,
     String guitarType,
-    String description
+    String description,
+    String imageUrl
 ) {
     public static GuitarResponse fromEntity(Guitar guitar) {
         return new GuitarResponse(
@@ -19,7 +20,8 @@ public record GuitarResponse (
                 guitar.getStringsCount(),
                 guitar.getPickupType(),
                 guitar.getGuitarType(),
-                guitar.getDescription()
+                guitar.getDescription(),
+                guitar.getImageUrl()
         );
     }
 }

@@ -13,5 +13,5 @@ public interface PedalRepository extends JpaRepository<Pedal, Long> {
     List<Pedal> findAllByPedalType(PedalTypes pedalTypes);
     @Query("SELECT ps.pedal FROM PedalSlot ps GROUP BY ps.pedal ORDER BY COUNT(ps) DESC")
     List<Pedal> findMostPopularPedals();
-    Optional<Pedal> findByIdAndUser(Long id, Long userId);
+    Optional<Pedal> findByIdAndUserId(Long id, Long userId);
 }

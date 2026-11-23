@@ -30,6 +30,7 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+	implementation("com.cloudinary:cloudinary-http44:1.39.0")
 	testImplementation("org.mockito:mockito-core:5.3.1")
 	testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
 	testImplementation("io.rest-assured:rest-assured:5.5.1")

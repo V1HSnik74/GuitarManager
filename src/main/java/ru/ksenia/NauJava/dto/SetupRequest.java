@@ -9,6 +9,7 @@ public record SetupRequest(
         Long ampId,
         Long cabId,
         String ampConfig,
-        List<PedalSlotRequest> pedalboard
+        List<PedalSlotRequest> pedalboard,
+        String imageUrl
 ) {
 }

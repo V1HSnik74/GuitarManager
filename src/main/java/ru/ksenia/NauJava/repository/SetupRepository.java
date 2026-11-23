@@ -23,7 +23,7 @@ public interface SetupRepository extends JpaRepository<Setup, Long> {
     @Query("SELECT s FROM Setup s WHERE s.guitar.brand = :brand AND s.guitar.model = :model")
     List<Setup> findAllByGuitarModelAndBrand(@Param("brand") String brand, @Param("model") String model);
 
-    Optional<Setup> findByIdAndUser(Long id, Long userId);
+    Optional<Setup> findByIdAndUserId(Long id, Long userId);
     boolean existsByGuitarId(Long guitarId);
     boolean existsByCabId(Long cabId);
     boolean existsByAmpId(Long ampId);

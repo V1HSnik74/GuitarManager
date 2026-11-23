@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface GuitarRepository extends JpaRepository<Guitar, Long> {
     List<Guitar> findAllByUserId(Long userId);
-    Optional<Guitar> findByIdAndUser(Long id, Long userId);
+    Optional<Guitar> findByIdAndUserId(Long id, Long userId);
 }

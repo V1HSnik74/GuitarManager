@@ -81,7 +81,7 @@ public class PedalServiceImpl implements PedalService {
     }
 
     private Pedal getPedal(Long id, Long userId) {
-        return pedalRepository.findByIdAndUser(id, userId).orElseThrow(() -> new ResourceNotFoundException("Педаль не найдена"));
+        return pedalRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new ResourceNotFoundException("Педаль не найдена"));
     }
 
     private void throwIfUsed(Long id) {
@@ -95,5 +95,6 @@ public class PedalServiceImpl implements PedalService {
         pedal.setModel(data.model());
         pedal.setPedalType(data.pedalType());
         pedal.setDescription(data.description());
+        pedal.setImageUrl(data.imageUrl());
     }
 }

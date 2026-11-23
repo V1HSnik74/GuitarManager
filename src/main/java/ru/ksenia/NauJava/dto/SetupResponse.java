@@ -12,7 +12,8 @@ public record SetupResponse(
         AmpResponse amp,
         CabResponse cab,
         String ampConfig,
-        List<PedalSlotResponse> pedalboard
+        List<PedalSlotResponse> pedalboard,
+        String imageUrl
 ) {
     public static SetupResponse fromEntity(Setup setup) {
         return new SetupResponse(
@@ -25,7 +26,8 @@ public record SetupResponse(
                 setup.getAmpConfig(),
                 setup.getPedalboard() == null ? List.of() : setup.getPedalboard().stream()
                         .map(PedalSlotResponse::fromEntity)
-                        .toList()
+                        .toList(),
+                setup.getImageUrl()
         );
     }
 }

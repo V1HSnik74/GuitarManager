@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface CabRepository extends JpaRepository<Cab, Long> {
     List<Cab> findAllByUserId(Long userId);
-    Optional<Cab> findByIdAndUser(Long id, Long userId);
+    Optional<Cab> findByIdAndUserId(Long id, Long userId);
 }

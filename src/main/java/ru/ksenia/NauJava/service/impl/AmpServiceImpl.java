@@ -81,7 +81,7 @@ public class AmpServiceImpl implements AmpService {
     }
 
     private Amp getAmp(Long id, Long userId) {
-        return ampRepository.findByIdAndUser(id, userId).orElseThrow(() -> new ResourceNotFoundException("Усилитель не найден"));
+        return ampRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new ResourceNotFoundException("Усилитель не найден"));
     }
 
     private void throwIfExists(Long id) {
@@ -95,5 +95,6 @@ public class AmpServiceImpl implements AmpService {
         amp.setBrand(data.brand());
         amp.setAmpType(data.ampType());
         amp.setDescription(data.description());
+        amp.setImageUrl(data.imageUrl());
     }
 }
