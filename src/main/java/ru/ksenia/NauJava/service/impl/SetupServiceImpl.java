@@ -12,6 +12,7 @@ import ru.ksenia.NauJava.entity.PedalSlot;
 import ru.ksenia.NauJava.entity.Setup;
 import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.repository.*;
+import ru.ksenia.NauJava.service.interfaces.CloudinaryService;
 import ru.ksenia.NauJava.service.interfaces.SetupService;
 
 import java.util.ArrayList;
@@ -25,15 +26,19 @@ public class SetupServiceImpl implements SetupService {
     private final GuitarRepository guitarRepository;
     private final AmpRepository ampRepository;
     private final CabRepository cabRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public SetupServiceImpl(SetupRepository setupRepository, UserRepository userRepository, PedalRepository pedalRepository, GuitarRepository guitarRepository, AmpRepository ampRepository, CabRepository cabRepository) {
+    public SetupServiceImpl(SetupRepository setupRepository, UserRepository userRepository,
+                            PedalRepository pedalRepository, GuitarRepository guitarRepository,
+                            AmpRepository ampRepository, CabRepository cabRepository, CloudinaryService cloudinaryService) {
         this.setupRepository = setupRepository;
         this.userRepository = userRepository;
         this.pedalRepository = pedalRepository;
         this.guitarRepository = guitarRepository;
         this.ampRepository = ampRepository;
         this.cabRepository = cabRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -57,15 +62,23 @@ public class SetupServiceImpl implements SetupService {
     @Transactional
     public void deleteSetup(Long setupId, Long userId) {
         Setup setup = getSetup(setupId, userId);
+        String image = setup.getImageUrl();
         setupRepository.delete(setup);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     @Override
     @Transactional
     public SetupResponse updateSetup(SetupRequest newSetup, Long setupId, Long userId) {
         Setup setup = getSetup(setupId, userId);
+        String oldImage = setup.getImageUrl();
         applyFields(setup, newSetup, userId);
-        return SetupResponse.fromEntity(setupRepository.save(setup));
+        String newImage = setup.getImageUrl();
+        SetupResponse setupUpd = SetupResponse.fromEntity(setupRepository.save(setup));
+        if (oldImage != null && !oldImage.equals(newImage)) {
+            cloudinaryService.deleteImageByUrl(oldImage);
+        }
+        return setupUpd;
     }
 
     @Override
@@ -84,7 +97,10 @@ public class SetupServiceImpl implements SetupService {
     @Override
     @Transactional
     public void deleteSetupAdmin(Long setupId) {
-        setupRepository.deleteById(setupId);
+        Setup setup = setupRepository.findById(setupId).orElseThrow(() -> new ResourceNotFoundException("Пресет не найден"));
+        String image = setup.getImageUrl();
+        setupRepository.delete(setup);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     private void applyPedalboard(Setup setup, Long userId, List<PedalSlotRequest> newData) {

@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.ksenia.NauJava.dto.ImageUploadResponse;
+import ru.ksenia.NauJava.exception.FileStorageException;
 import ru.ksenia.NauJava.service.interfaces.CloudinaryService;
 
 import java.io.IOException;
@@ -42,7 +43,19 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             return new ImageUploadResponse(imageUrl);
         }
         catch (IOException e) {
-            throw new RuntimeException("Ошибка при загрузке изображения", e);
+            throw new FileStorageException("Ошибка при загрузке изображения", e);
+        }
+    }
+
+    @Override
+    public void deleteImageByUrl(String imageUrl) {
+        if (imageUrl == null || !imageUrl.contains("res.cloudinary.com")) return;
+        String publicId = imageUrl.replaceAll("^.*/upload/(?:v\\d+/)?|\\.[a-zA-Z0-9]+$", "");
+        try {
+            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        }
+        catch (IOException e) {
+            throw new FileStorageException("Не удалось удалить изображение из облачного хранилища", e);
         }
     }
 }

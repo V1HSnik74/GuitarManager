@@ -11,7 +11,7 @@ public record SetupResponse(
         GuitarResponse guitar,
         AmpResponse amp,
         CabResponse cab,
-        String ampConfig,
+        AmpConfig ampConfig,
         List<PedalSlotResponse> pedalboard,
         String imageUrl
 ) {

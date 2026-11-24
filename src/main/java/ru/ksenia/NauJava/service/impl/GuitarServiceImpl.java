@@ -11,6 +11,7 @@ import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.repository.GuitarRepository;
 import ru.ksenia.NauJava.repository.SetupRepository;
 import ru.ksenia.NauJava.repository.UserRepository;
+import ru.ksenia.NauJava.service.interfaces.CloudinaryService;
 import ru.ksenia.NauJava.service.interfaces.GuitarService;
 
 import java.util.List;
@@ -20,12 +21,14 @@ public class GuitarServiceImpl implements GuitarService {
     private final GuitarRepository guitarRepository;
     private final UserRepository userRepository;
     private final SetupRepository setupRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public GuitarServiceImpl(GuitarRepository guitarRepository, UserRepository userRepository, SetupRepository setupRepository) {
+    public GuitarServiceImpl(GuitarRepository guitarRepository, UserRepository userRepository, SetupRepository setupRepository, CloudinaryService cloudinaryService) {
         this.guitarRepository = guitarRepository;
         this.userRepository = userRepository;
         this.setupRepository = setupRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -42,8 +45,14 @@ public class GuitarServiceImpl implements GuitarService {
     @Transactional
     public GuitarResponse updateGuitar(GuitarRequest newData, Long guitarId, Long userId) {
         Guitar guitar = getGuitar(guitarId, userId);
+        String oldImage = guitar.getImageUrl();
         applyFields(guitar, newData);
-        return GuitarResponse.fromEntity(guitarRepository.save(guitar));
+        String newImage = guitar.getImageUrl();
+        GuitarResponse guitarUpd = GuitarResponse.fromEntity(guitarRepository.save(guitar));
+        if (oldImage != null && !oldImage.equals(newImage)) {
+            cloudinaryService.deleteImageByUrl(oldImage);
+        }
+        return guitarUpd;
     }
 
     @Override
@@ -51,7 +60,9 @@ public class GuitarServiceImpl implements GuitarService {
     public void deleteGuitar(Long id, Long userId) {
         Guitar guitar = getGuitar(id, userId);
         throwIfUsed(id);
+        String image = guitar.getImageUrl();
         guitarRepository.delete(guitar);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     @Override
@@ -76,8 +87,11 @@ public class GuitarServiceImpl implements GuitarService {
     @Override
     @Transactional
     public void deleteGuitarAdmin(Long guitarId) {
+        Guitar guitar = guitarRepository.findById(guitarId).orElseThrow(() -> new ResourceNotFoundException("Гитара не найдена"));
         throwIfUsed(guitarId);
+        String image = guitar.getImageUrl();
         guitarRepository.deleteById(guitarId);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     private Guitar getGuitar(Long id, Long userId) {

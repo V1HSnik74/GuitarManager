@@ -1,5 +1,6 @@
 package ru.ksenia.NauJava.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.ksenia.NauJava.dto.AmpRequest;
@@ -19,12 +20,12 @@ public class AmpController {
     }
 
     @PostMapping
-    public AmpResponse addAmp(@RequestBody AmpRequest amp, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public AmpResponse addAmp(@Valid @RequestBody AmpRequest amp, @AuthenticationPrincipal CustomUserDetails currUser) {
         return ampService.addAmp(amp, currUser.getId());
     }
 
     @PutMapping("/{id}")
-    public AmpResponse updateAmp(@RequestBody AmpRequest newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public AmpResponse updateAmp(@Valid @RequestBody AmpRequest newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
         return ampService.updateAmp(newData, id, currUser.getId());
     }
 

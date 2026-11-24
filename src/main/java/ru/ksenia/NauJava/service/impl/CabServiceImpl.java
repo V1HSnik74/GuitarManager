@@ -12,6 +12,7 @@ import ru.ksenia.NauJava.repository.CabRepository;
 import ru.ksenia.NauJava.repository.SetupRepository;
 import ru.ksenia.NauJava.repository.UserRepository;
 import ru.ksenia.NauJava.service.interfaces.CabService;
+import ru.ksenia.NauJava.service.interfaces.CloudinaryService;
 
 import java.util.List;
 
@@ -20,12 +21,14 @@ public class CabServiceImpl implements CabService {
     private final UserRepository userRepository;
     private final CabRepository cabRepository;
     private final SetupRepository setupRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public CabServiceImpl(UserRepository userRepository, CabRepository cabRepository, SetupRepository setupRepository) {
+    public CabServiceImpl(UserRepository userRepository, CabRepository cabRepository, SetupRepository setupRepository, CloudinaryService cloudinaryService) {
         this.userRepository = userRepository;
         this.cabRepository = cabRepository;
         this.setupRepository = setupRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -42,8 +45,14 @@ public class CabServiceImpl implements CabService {
     @Transactional
     public CabResponse updateCab(CabRequest newData, Long id, Long userId) {
         Cab cab = getCab(id, userId);
+        String oldImage = cab.getImageUrl();
         applyFields(cab, newData);
-        return CabResponse.fromEntity(cabRepository.save(cab));
+        String newImage = cab.getImageUrl();
+        CabResponse updCab = CabResponse.fromEntity(cabRepository.save(cab));
+        if (oldImage != null && !oldImage.equals(newImage)) {
+            cloudinaryService.deleteImageByUrl(oldImage);
+        }
+        return updCab;
     }
 
     @Override
@@ -51,7 +60,9 @@ public class CabServiceImpl implements CabService {
     public void deleteCab(Long id, Long userId) {
         Cab cab = getCab(id, userId);
         throwIfUsed(id);
+        String image = cab.getImageUrl();
         cabRepository.delete(cab);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     @Override
@@ -76,8 +87,11 @@ public class CabServiceImpl implements CabService {
     @Override
     @Transactional
     public void deleteCabAdmin(Long id) {
+        Cab cab = cabRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Кабинет не найден"));
         throwIfUsed(id);
-        cabRepository.deleteById(id);
+        String image = cab.getImageUrl();
+        cabRepository.delete(cab);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     private Cab getCab(Long id, Long userId) {

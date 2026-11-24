@@ -1,5 +1,6 @@
 package ru.ksenia.NauJava.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.ksenia.NauJava.dto.CabRequest;
@@ -20,12 +21,12 @@ public class CabController {
     }
 
     @PostMapping
-    public CabResponse addCab(@RequestBody CabRequest cab, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public CabResponse addCab(@Valid @RequestBody CabRequest cab, @AuthenticationPrincipal CustomUserDetails currUser) {
         return cabService.addCab(cab, currUser.getId());
     }
 
     @PutMapping("/{id}")
-    public CabResponse updateCab(@RequestBody CabRequest newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public CabResponse updateCab(@Valid @RequestBody CabRequest newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
         return cabService.updateCab(newData, id, currUser.getId());
     }
 

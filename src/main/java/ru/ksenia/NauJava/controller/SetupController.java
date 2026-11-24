@@ -1,5 +1,6 @@
 package ru.ksenia.NauJava.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +22,12 @@ public class SetupController {
     }
 
     @PostMapping
-    public SetupResponse addSetup(@RequestBody SetupRequest setup, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public SetupResponse addSetup(@Valid @RequestBody SetupRequest setup, @AuthenticationPrincipal CustomUserDetails currUser) {
         return setupService.addSetup(setup, currUser.getId());
     }
 
     @PutMapping("/{id}")
-    public SetupResponse updateSetup(@RequestBody SetupRequest newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public SetupResponse updateSetup(@Valid @RequestBody SetupRequest newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
         return setupService.updateSetup(newData, id, currUser.getId());
     }
 

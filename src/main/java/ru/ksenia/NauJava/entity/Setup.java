@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import ru.ksenia.NauJava.dto.AmpConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +39,9 @@ public class Setup {
     @JoinColumn(name = "amp_id")
     private Amp amp;
 
-    @Column(columnDefinition = "TEXT", name = "amp_config")
-    private String ampConfig;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", name = "amp_config")
+    private AmpConfig ampConfig;
 
     @Column(name = "image_url")
     private String imageUrl;
@@ -49,7 +53,7 @@ public class Setup {
     @OneToMany(mappedBy = "setup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PedalSlot> pedalboard = new ArrayList<>();
 
-    public Setup(String name, String description, User user, Guitar guitar, Amp amp, String ampConfig, Cab cab) {
+    public Setup(String name, String description, User user, Guitar guitar, Amp amp, AmpConfig ampConfig, Cab cab) {
         this.name = name;
         this.description = description;
         this.user = user;

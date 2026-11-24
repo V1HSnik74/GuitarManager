@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-hateoas")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-validation:4.2.0-RC1")
 	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
 	implementation("com.cloudinary:cloudinary-http44:1.39.0")
 	testImplementation("org.mockito:mockito-core:5.3.1")

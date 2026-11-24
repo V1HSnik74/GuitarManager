@@ -6,4 +6,5 @@ import ru.ksenia.NauJava.dto.ImageUploadResponse;
 
 public interface CloudinaryService {
     public ImageUploadResponse uploadImage(MultipartFile file);
+    void deleteImageByUrl(String imageUrl);
 }

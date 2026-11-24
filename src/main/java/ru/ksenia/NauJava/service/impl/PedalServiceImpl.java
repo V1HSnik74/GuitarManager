@@ -11,6 +11,7 @@ import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.repository.PedalRepository;
 import ru.ksenia.NauJava.repository.PedalSlotRepository;
 import ru.ksenia.NauJava.repository.UserRepository;
+import ru.ksenia.NauJava.service.interfaces.CloudinaryService;
 import ru.ksenia.NauJava.service.interfaces.PedalService;
 
 import java.util.List;
@@ -20,12 +21,14 @@ public class PedalServiceImpl implements PedalService {
     private final PedalRepository pedalRepository;
     private final UserRepository userRepository;
     private final PedalSlotRepository pedalSlotRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public PedalServiceImpl(PedalRepository pedalRepository, UserRepository userRepository, PedalSlotRepository pedalSlotRepository) {
+    public PedalServiceImpl(PedalRepository pedalRepository, UserRepository userRepository, PedalSlotRepository pedalSlotRepository, CloudinaryService cloudinaryService) {
         this.pedalRepository = pedalRepository;
         this.userRepository = userRepository;
         this.pedalSlotRepository = pedalSlotRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -42,8 +45,14 @@ public class PedalServiceImpl implements PedalService {
     @Transactional
     public PedalResponse updatePedal(PedalRequest newData, Long id, Long userId) {
         Pedal pedal = getPedal(id, userId);
+        String oldImage = pedal.getImageUrl();
         applyFields(pedal, newData);
-        return PedalResponse.fromEntity(pedalRepository.save(pedal));
+        String newImage = pedal.getImageUrl();
+        PedalResponse pedalUpd = PedalResponse.fromEntity(pedalRepository.save(pedal));
+        if (oldImage != null && !oldImage.equals(newImage)) {
+            cloudinaryService.deleteImageByUrl(oldImage);
+        }
+        return pedalUpd;
     }
 
     @Override
@@ -51,7 +60,9 @@ public class PedalServiceImpl implements PedalService {
     public void deletePedal(Long id, Long userId) {
         Pedal pedal = getPedal(id, userId);
         throwIfUsed(id);
+        String image = pedal.getImageUrl();
         pedalRepository.delete(pedal);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     @Override
@@ -76,8 +87,11 @@ public class PedalServiceImpl implements PedalService {
     @Override
     @Transactional
     public void deletePedalAdmin(Long id) {
+        Pedal pedal = pedalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Педаль не найдена"));
         throwIfUsed(id);
+        String image = pedal.getImageUrl();
         pedalRepository.deleteById(id);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     private Pedal getPedal(Long id, Long userId) {

@@ -1,5 +1,6 @@
 package ru.ksenia.NauJava.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.ksenia.NauJava.dto.PedalRequest;
@@ -19,12 +20,12 @@ public class PedalController {
     }
 
     @PostMapping
-    public PedalResponse addPedal(@RequestBody PedalRequest pedal, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public PedalResponse addPedal(@Valid @RequestBody PedalRequest pedal, @AuthenticationPrincipal CustomUserDetails currUser) {
         return pedalService.addPedal(pedal, currUser.getId());
     }
 
     @PutMapping("/{id}")
-    public PedalResponse updatePedal(@RequestBody PedalRequest newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public PedalResponse updatePedal(@Valid @RequestBody PedalRequest newData, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currUser) {
         return pedalService.updatePedal(newData, id, currUser.getId());
     }
 

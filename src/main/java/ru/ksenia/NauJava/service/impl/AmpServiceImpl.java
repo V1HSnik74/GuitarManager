@@ -12,6 +12,7 @@ import ru.ksenia.NauJava.repository.AmpRepository;
 import ru.ksenia.NauJava.repository.SetupRepository;
 import ru.ksenia.NauJava.repository.UserRepository;
 import ru.ksenia.NauJava.service.interfaces.AmpService;
+import ru.ksenia.NauJava.service.interfaces.CloudinaryService;
 
 import java.util.List;
 
@@ -20,12 +21,14 @@ public class AmpServiceImpl implements AmpService {
     private final AmpRepository ampRepository;
     private final SetupRepository setupRepository;
     private final UserRepository userRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public AmpServiceImpl(AmpRepository ampRepository, SetupRepository setupRepository, UserRepository userRepository) {
+    public AmpServiceImpl(AmpRepository ampRepository, SetupRepository setupRepository, UserRepository userRepository, CloudinaryService cloudinaryService) {
         this.ampRepository = ampRepository;
         this.setupRepository = setupRepository;
         this.userRepository = userRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -42,8 +45,14 @@ public class AmpServiceImpl implements AmpService {
     @Transactional
     public AmpResponse updateAmp(AmpRequest newData, Long id, Long userId) {
         Amp amp = getAmp(id, userId);
+        String oldImage = amp.getImageUrl();
         applyFields(amp, newData);
-        return AmpResponse.fromEntity(ampRepository.save(amp));
+        String newImage = amp.getImageUrl();
+        AmpResponse updAmp = AmpResponse.fromEntity(ampRepository.save(amp));
+        if (oldImage != null && !oldImage.equals(newImage)) {
+            cloudinaryService.deleteImageByUrl(oldImage);
+        }
+        return updAmp;
     }
 
     @Override
@@ -51,7 +60,9 @@ public class AmpServiceImpl implements AmpService {
     public void deleteAmp(Long id, Long userId) {
         Amp amp = getAmp(id, userId);
         throwIfExists(id);
+        String image = amp.getImageUrl();
         ampRepository.delete(amp);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     @Override
@@ -76,8 +87,11 @@ public class AmpServiceImpl implements AmpService {
     @Override
     @Transactional
     public void deleteAmpAdmin(Long id) {
+        Amp amp = ampRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Усилитель не найден"));
         throwIfExists(id);
-        ampRepository.deleteById(id);
+        String image = amp.getImageUrl();
+        ampRepository.delete(amp);
+        cloudinaryService.deleteImageByUrl(image);
     }
 
     private Amp getAmp(Long id, Long userId) {

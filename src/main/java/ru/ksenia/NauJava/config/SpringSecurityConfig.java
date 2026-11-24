@@ -1,6 +1,7 @@
 package ru.ksenia.NauJava.config;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import ru.ksenia.NauJava.entity.User;
 import ru.ksenia.NauJava.enums.Role;
 import ru.ksenia.NauJava.repository.UserRepository;
@@ -34,15 +36,17 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter,
+                                                   @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) throws Exception {
         http.
                 csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(e -> e.authenticationEntryPoint((
-                        (request, response, authException) ->
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
-                )))
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(((request, response, authException) ->
+                                resolver.resolveException(request, response, null, authException)))
+                        .accessDeniedHandler(((request, response, accessDeniedException) ->
+                                resolver.resolveException(request, response, null, accessDeniedException))))
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/api/*/admin/**", "/api/*/admin").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()

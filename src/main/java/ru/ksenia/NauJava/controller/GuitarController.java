@@ -1,5 +1,6 @@
 package ru.ksenia.NauJava.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.ksenia.NauJava.dto.GuitarRequest;
@@ -19,12 +20,12 @@ public class GuitarController {
     }
 
     @PostMapping
-    public GuitarResponse addGuitar(@RequestBody GuitarRequest guitar, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public GuitarResponse addGuitar(@Valid @RequestBody GuitarRequest guitar, @AuthenticationPrincipal CustomUserDetails currUser) {
         return guitarService.addGuitar(guitar, currUser.getId());
     }
 
     @PutMapping("/{id}")
-    public GuitarResponse updateGuitar(@PathVariable Long id, @RequestBody GuitarRequest newData, @AuthenticationPrincipal CustomUserDetails currUser) {
+    public GuitarResponse updateGuitar(@PathVariable Long id, @Valid @RequestBody GuitarRequest newData, @AuthenticationPrincipal CustomUserDetails currUser) {
         return guitarService.updateGuitar(newData, id, currUser.getId());
     }
 
