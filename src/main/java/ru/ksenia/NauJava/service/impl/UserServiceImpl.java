@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addNewUser(RegisterRequest request) {
+    public User addNewUser(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("Пользователь с такой почтой уже существует");
         }
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(Role.USER);
         user.setEmail(request.email());
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override

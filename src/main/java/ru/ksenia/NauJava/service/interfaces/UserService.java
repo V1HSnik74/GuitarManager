@@ -4,6 +4,6 @@ import ru.ksenia.NauJava.dto.RegisterRequest;
 import ru.ksenia.NauJava.entity.User;
 
 public interface UserService {
-    void addNewUser(RegisterRequest request);
+    User addNewUser(RegisterRequest request);
     User getUserByUsernameOrEmail(String username, String email);
 }

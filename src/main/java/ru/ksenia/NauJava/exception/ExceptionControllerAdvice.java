@@ -42,6 +42,13 @@ public class ExceptionControllerAdvice {
         return new ErrorResponse(401, "Ошибка авторизации: " + e.getMessage());
     }
 
+    @ExceptionHandler(RefreshTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleRefreshToken(RefreshTokenException e) {
+        return new ErrorResponse(401,
+                e.getMessage(), e.getCode());
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDenied(AccessDeniedException e) {
